@@ -65,3 +65,15 @@ The application uses the following MySQL tables:
 - PHP 7.0+
 - MySQL 5.7+ or MariaDB
 - Web server (Apache, Nginx, etc.)
+
+## Preview
+
+<img width="1919" height="917" alt="image" src="https://github.com/user-attachments/assets/bdcacdce-958e-420c-b97e-0f89f8c4b362" />
+<br>
+<img width="1919" height="913" alt="image" src="https://github.com/user-attachments/assets/e4e4469e-8c78-47d8-90df-9da7123440c2" />
+<br>
+<img width="1914" height="916" alt="image" src="https://github.com/user-attachments/assets/9bd7cfec-4b08-4010-a033-62898ff89e9e" />
+<br>
+
+
+
