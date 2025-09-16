@@ -26,18 +26,38 @@
 	--font-size-lg: 16px;
 	--font-size-xl: 18px;
 	--transition: all 0.3s ease;
+
+	/* Light mode specific variables */
+	--input-background: #ffffff;
+	--input-border: #ddd;
+	--comment-background: rgba(106, 56, 243, 0.05);
+	--comment-border: var(--primary-color);
+	--form-overlay: rgba(0, 0, 0, 0.6);
 }
 
-/* Dark mode variables */
+/* Dark mode variables - Reddit-inspired colors */
 [data-theme="dark"] {
-	--background-color: #1a1a1a;
-	--card-background: #2d2d2d;
-	--text-color: #ffffff;
-	--text-muted: #b0b0b0;
-	--border-color: #404040;
-	--border-light: #363636;
-	--shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-	--shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.4);
+	--background-color: #030303;
+	--card-background: #1a1a1b;
+	--text-color: #d7dadc;
+	--text-muted: #818384;
+	--border-color: #343536;
+	--border-light: #272729;
+	--shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+	--shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.7);
+
+	/* Dark mode specific variables */
+	--input-background: #272729;
+	--input-border: #343536;
+	--comment-background: rgba(215, 218, 220, 0.05);
+	--comment-border: #4fbcff;
+	--form-overlay: rgba(0, 0, 0, 0.8);
+
+	/* Adjusted colors for better contrast */
+	--primary-color: #4fbcff;
+	--primary-hover: #3da8eb;
+	--secondary-color: #46d160;
+	--secondary-hover: #3bb854;
 }
 
 body {
@@ -99,17 +119,24 @@ header .brand {
 
 header input {
 	padding: var(--spacing-sm);
-	border: 1px solid var(--border-color);
+	border: 1px solid var(--input-border);
 	border-radius: var(--border-radius);
 	font-size: var(--font-size-sm);
 	transition: var(--transition);
 	min-width: 200px;
+	background: var(--input-background);
+	color: var(--text-color);
+}
+
+header input::placeholder {
+	color: var(--text-muted);
+	opacity: 1;
 }
 
 header input:focus {
 	outline: none;
 	border-color: var(--primary-color);
-	box-shadow: 0 0 0 2px rgba(106, 56, 243, 0.2);
+	box-shadow: 0 0 0 2px rgba(79, 188, 255, 0.2);
 }
 
 header button {
@@ -155,23 +182,27 @@ header button:hover {
 	margin: var(--spacing-xs);
 	padding: var(--spacing-sm) var(--spacing-md);
 	border: none;
-	background: var(--border-light);
+	background: var(--comment-background);
 	border-radius: var(--border-radius-large);
 	cursor: pointer;
 	font-size: var(--font-size-sm);
 	transition: var(--transition);
 	display: inline-block;
+	color: var(--text-color);
+	border: 1px solid var(--border-light);
 }
 
 .categories button:hover {
 	background: var(--primary-color);
 	color: white;
 	transform: translateY(-1px);
+	border-color: var(--primary-color);
 }
 
 .categories button.active {
 	background: var(--primary-color);
 	color: white;
+	border-color: var(--primary-color);
 }
 
 main {
@@ -200,12 +231,14 @@ main h2 {
 	box-shadow: var(--shadow);
 	transition: var(--transition);
 	position: relative;
-	overflow: hidden;
+	overflow: visible; /* Changed from hidden to allow dropdown to show */
+	border: 1px solid var(--border-light);
 }
 
 .card:hover {
 	box-shadow: var(--shadow-hover);
 	transform: translateY(-2px);
+	border-color: var(--border-color);
 }
 .card h3 {
 	margin: 0 0 var(--spacing-sm) 0;
@@ -230,6 +263,133 @@ main h2 {
 	transform: scale(1.1);
 }
 
+/* Card header with dropdown */
+.card-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	margin-bottom: var(--spacing-sm);
+	position: relative;
+}
+
+.card-header h3 {
+	margin: 0;
+	flex: 1;
+}
+
+/* Dropdown menu styles */
+.dropdown-menu {
+	position: relative;
+	display: inline-block;
+	z-index: 1000; /* Ensure the parent also has proper z-index */
+}
+
+.dropdown-toggle {
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	padding: var(--spacing-xs);
+	border-radius: 50%;
+	transition: var(--transition);
+	color: var(--text-muted);
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.dropdown-toggle:hover {
+	background: var(--comment-background);
+	color: var(--text-color);
+	transform: scale(1.1);
+}
+
+.dropdown-toggle:active {
+	background: var(--primary-color);
+	color: white;
+}
+
+.dropdown-toggle .dots {
+	font-size: var(--font-size-lg);
+	font-weight: bold;
+	line-height: 1;
+}
+
+.dropdown-content {
+	display: none;
+	position: absolute;
+	right: 0;
+	top: 100%;
+	background: var(--card-background);
+	min-width: 120px;
+	box-shadow: var(--shadow-hover);
+	border-radius: var(--border-radius);
+	z-index: 9999;
+	border: 1px solid var(--border-color);
+	overflow: hidden;
+	margin-top: 2px; /* Small gap between button and dropdown */
+}
+
+.dropdown-content.show {
+	display: block;
+	animation: dropdownFadeIn 0.2s ease;
+}
+
+@keyframes dropdownFadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(-5px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.dropdown-item {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-xs);
+	width: 100%;
+	padding: var(--spacing-sm);
+	border: none;
+	background: transparent;
+	color: var(--text-color);
+	font-size: var(--font-size-sm);
+	cursor: pointer;
+	transition: var(--transition);
+	text-align: left;
+}
+
+.dropdown-item:hover {
+	background: var(--comment-background);
+}
+
+.dropdown-item.edit-btn {
+	color: #00bcd4; /* Cyan color for edit */
+}
+
+.dropdown-item.edit-btn:hover {
+	background: rgba(0, 188, 212, 0.1);
+	color: #00acc1;
+}
+
+.dropdown-item.delete-btn {
+	color: #f44336; /* Red color for delete */
+}
+
+.dropdown-item.delete-btn:hover {
+	background: rgba(244, 67, 54, 0.1);
+	color: #d32f2f;
+}
+
+.dropdown-item .icon {
+	font-size: var(--font-size-sm);
+}
+
+/* Remove the CSS hover fallback - we want click-only behavior */
+
 .card p {
 	margin: var(--spacing-sm) 0;
 	color: var(--text-muted);
@@ -243,7 +403,7 @@ main h2 {
 }
 
 .tag {
-	background: rgba(106, 56, 243, 0.1);
+	background: var(--comment-background);
 	color: var(--primary-color);
 	padding: var(--spacing-xs) var(--spacing-sm);
 	border-radius: var(--border-radius);
@@ -252,6 +412,14 @@ main h2 {
 	text-transform: capitalize;
 	display: inline-block;
 	margin-top: var(--spacing-sm);
+	border: 1px solid var(--border-light);
+	transition: var(--transition);
+}
+
+.tag:hover {
+	background: var(--primary-color);
+	color: var(--card-background);
+	transform: scale(1.05);
 }
 
 /* Form Popup Styling */
@@ -262,22 +430,23 @@ main h2 {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background: rgba(0, 0, 0, 0.6);
+	background: var(--form-overlay);
 	justify-content: center;
 	align-items: center;
 	z-index: 1000;
-	backdrop-filter: blur(4px);
+	backdrop-filter: blur(8px);
 }
 
 .form-container {
 	background: var(--card-background);
 	padding: var(--spacing-lg);
 	border-radius: var(--border-radius-large);
-	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 	width: 90%;
 	max-width: 500px;
 	max-height: 90vh;
 	overflow-y: auto;
+	border: 1px solid var(--border-color);
 }
 
 .form-container h2 {
@@ -293,12 +462,20 @@ main h2 {
 	width: 100%;
 	padding: var(--spacing-md);
 	margin: var(--spacing-sm) 0;
-	border: 1px solid var(--border-color);
+	border: 1px solid var(--input-border);
 	border-radius: var(--border-radius);
 	font-size: var(--font-size-base);
 	font-family: inherit;
 	transition: var(--transition);
 	box-sizing: border-box;
+	background: var(--input-background);
+	color: var(--text-color);
+}
+
+.form-container input::placeholder,
+.form-container textarea::placeholder {
+	color: var(--text-muted);
+	opacity: 1;
 }
 
 .form-container input:focus,
@@ -306,7 +483,7 @@ main h2 {
 .form-container select:focus {
 	outline: none;
 	border-color: var(--primary-color);
-	box-shadow: 0 0 0 2px rgba(106, 56, 243, 0.2);
+	box-shadow: 0 0 0 2px rgba(79, 188, 255, 0.2);
 }
 .form-container button {
 	margin-top: var(--spacing-sm);
@@ -345,26 +522,40 @@ main h2 {
 	margin-top: var(--spacing-md);
 	padding-top: var(--spacing-sm);
 	border-top: 1px solid var(--border-light);
+	background: var(--background-color);
+	border-radius: var(--border-radius);
+	padding: var(--spacing-sm);
 }
 
 .comments-section h4 {
 	margin: 0 0 var(--spacing-sm) 0;
 	font-size: var(--font-size-base);
-	color: var(--text-muted);
+	color: var(--text-color);
 	font-weight: 600;
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-xs);
+}
+
+.comments-section h4::before {
+	content: "💬";
+	font-size: var(--font-size-sm);
 }
 
 .comment {
-	background: rgba(106, 56, 243, 0.05);
+	background: var(--comment-background);
 	padding: var(--spacing-sm);
 	margin: var(--spacing-xs) 0;
 	border-radius: var(--border-radius);
-	border-left: 3px solid var(--primary-color);
+	border-left: 3px solid var(--comment-border);
 	transition: var(--transition);
+	border: 1px solid var(--border-light);
 }
 
 .comment:hover {
-	background: rgba(106, 56, 243, 0.08);
+	background: var(--card-background);
+	border-left-color: var(--primary-color);
+	transform: translateX(2px);
 }
 
 .comment strong {
@@ -377,6 +568,7 @@ main h2 {
 	margin: var(--spacing-xs) 0;
 	font-size: var(--font-size-sm);
 	color: var(--text-color);
+	line-height: 1.4;
 }
 
 .comment small {
@@ -388,25 +580,35 @@ main h2 {
 	margin-top: var(--spacing-sm);
 	padding-top: var(--spacing-sm);
 	border-top: 1px solid var(--border-light);
+	background: var(--background-color);
+	border-radius: var(--border-radius);
+	padding: var(--spacing-sm);
 }
 
 .add-comment textarea {
 	width: 100%;
 	height: 60px;
 	padding: var(--spacing-sm);
-	border: 1px solid var(--border-color);
+	border: 1px solid var(--input-border);
 	border-radius: var(--border-radius);
 	resize: vertical;
 	font-family: inherit;
 	font-size: var(--font-size-sm);
 	transition: var(--transition);
 	box-sizing: border-box;
+	background: var(--input-background);
+	color: var(--text-color);
+}
+
+.add-comment textarea::placeholder {
+	color: var(--text-muted);
+	opacity: 1;
 }
 
 .add-comment textarea:focus {
 	outline: none;
 	border-color: var(--primary-color);
-	box-shadow: 0 0 0 2px rgba(106, 56, 243, 0.2);
+	box-shadow: 0 0 0 2px rgba(79, 188, 255, 0.2);
 }
 
 .add-comment button {
@@ -464,21 +666,26 @@ main h2 {
 	transition: var(--transition);
 	margin-left: var(--spacing-sm);
 	text-decoration: none;
+	position: relative;
+	overflow: hidden;
 }
 
 .theme-toggle:hover {
 	background: var(--primary-color);
 	border-color: var(--primary-color);
 	color: white;
-	transform: translateY(-1px) rotate(15deg);
+	transform: translateY(-1px) scale(1.05);
+	box-shadow: var(--shadow-hover);
 }
 
 .theme-toggle .sun-icon {
 	display: block;
+	animation: rotate 0.3s ease;
 }
 
 .theme-toggle .moon-icon {
 	display: none;
+	animation: rotate 0.3s ease;
 }
 
 [data-theme="dark"] .theme-toggle .sun-icon {
@@ -487,6 +694,15 @@ main h2 {
 
 [data-theme="dark"] .theme-toggle .moon-icon {
 	display: block;
+}
+
+@keyframes rotate {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(180deg);
+	}
 }
 
 /* Success and error message styling */
@@ -594,17 +810,24 @@ main h2 {
 	width: 100%;
 	padding: var(--spacing-md);
 	margin: var(--spacing-sm) 0;
-	border: 1px solid var(--border-color);
+	border: 1px solid var(--input-border);
 	border-radius: var(--border-radius);
 	font-size: var(--font-size-base);
 	box-sizing: border-box;
 	transition: var(--transition);
+	background: var(--input-background);
+	color: var(--text-color);
+}
+
+.login-container input::placeholder {
+	color: var(--text-muted);
+	opacity: 1;
 }
 
 .login-container input:focus {
 	outline: none;
 	border-color: var(--primary-color);
-	box-shadow: 0 0 0 2px rgba(106, 56, 243, 0.2);
+	box-shadow: 0 0 0 2px rgba(79, 188, 255, 0.2);
 }
 
 .login-container button {
@@ -710,29 +933,29 @@ main h2 {
 
 /* Dark theme for login page */
 [data-theme="dark"] .login-page {
-	background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+	background: linear-gradient(135deg, #030303 0%, #1a1a1b 50%, #030303 100%);
 	background-attachment: fixed;
 }
 
 [data-theme="dark"] .login-page::before {
 	background-image: radial-gradient(
 			circle at 25% 25%,
-			rgba(255, 255, 255, 0.05) 0%,
+			rgba(79, 188, 255, 0.03) 0%,
 			transparent 50%
 		),
 		radial-gradient(
 			circle at 75% 75%,
-			rgba(255, 255, 255, 0.05) 0%,
+			rgba(79, 188, 255, 0.03) 0%,
 			transparent 50%
 		),
 		radial-gradient(
 			circle at 75% 25%,
-			rgba(255, 255, 255, 0.02) 0%,
+			rgba(79, 188, 255, 0.01) 0%,
 			transparent 50%
 		),
 		radial-gradient(
 			circle at 25% 75%,
-			rgba(255, 255, 255, 0.02) 0%,
+			rgba(79, 188, 255, 0.01) 0%,
 			transparent 50%
 		);
 }

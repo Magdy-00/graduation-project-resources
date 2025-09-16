@@ -67,6 +67,20 @@ foreach ($all_comments as $comment) {
   </nav>
 
   <main>
+    <?php if (isset($_SESSION['success'])): ?>
+      <div class="success">
+        <?= htmlspecialchars($_SESSION['success']) ?>
+      </div>
+      <?php unset($_SESSION['success']); ?>
+    <?php endif; ?>
+
+    <?php if (isset($_SESSION['error'])): ?>
+      <div class="error">
+        <?= htmlspecialchars($_SESSION['error']) ?>
+      </div>
+      <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
+
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md);">
       <h2>All References</h2>
       <small id="results-count" style="color: var(--text-muted);"></small>
@@ -74,12 +88,29 @@ foreach ($all_comments as $comment) {
     <div id="reference-list" class="card-container">
       <?php foreach ($references as $ref): ?>
         <div class="card" data-category="<?= htmlspecialchars($ref['category']) ?>" id="ref-<?= $ref['id'] ?>">
-          <h3>
-            <?= htmlspecialchars($ref['title']) ?>
-            <?php if (!empty($ref['url'])): ?>
-              <a href="<?= htmlspecialchars($ref['url']) ?>" target="_blank">🔗</a>
+          <div class="card-header">
+            <h3>
+              <?= htmlspecialchars($ref['title']) ?>
+              <?php if (!empty($ref['url'])): ?>
+                <a href="<?= htmlspecialchars($ref['url']) ?>" target="_blank">🔗</a>
+              <?php endif; ?>
+            </h3>
+            <?php if ($ref['created_by'] == $_SESSION['user_id']): ?>
+              <div class="dropdown-menu">
+                <button class="dropdown-toggle" onclick="toggleDropdown(<?= $ref['id'] ?>)" aria-label="More options">
+                <span class="dots">⋮</span>
+            </button>
+            <div class="dropdown-content" id="dropdown-<?= $ref['id'] ?>">
+                <button onclick="editReference(<?= $ref['id'] ?>)" class="dropdown-item edit-btn">
+                    <span class="icon">✏️</span> Edit
+                </button>
+                <button onclick="deleteReference(<?= $ref['id'] ?>)" class="dropdown-item delete-btn">
+                    <span class="icon">🗑️</span> Delete
+                </button>
+            </div>
+              </div>
             <?php endif; ?>
-          </h3>
+          </div>
           <p><strong>By:</strong> <?= htmlspecialchars($ref['display_name'] ?? $ref['username'] ?? 'Unknown') ?></p>
           <p><?= htmlspecialchars($ref['comment']) ?></p>
           <span class="tag"><?= htmlspecialchars($ref['category']) ?></span>
@@ -128,6 +159,27 @@ foreach ($all_comments as $comment) {
       </select>
       <button type="submit">Add</button>
       <button type="button" onclick="closeForm()">Cancel</button>
+    </form>
+  </div>
+
+  <!-- Edit Reference Form -->
+  <div id="edit-form-popup" class="form-popup">
+    <form action="edit_reference.php" method="post" class="form-container">
+      <h2>Edit Reference</h2>
+      <input type="hidden" name="reference_id" id="edit-reference-id">
+      <input type="text" name="title" id="edit-title" placeholder="Title" required>
+      <input type="url" name="url" id="edit-url" placeholder="URL (optional)">
+      <textarea name="comment" id="edit-comment" placeholder="Comment (optional)"></textarea>
+      <select name="category" id="edit-category" required>
+        <option value="document">Document</option>
+        <option value="link">Link</option>
+        <option value="paper">Paper</option>
+        <option value="tool">Tool</option>
+        <option value="person">Person</option>
+        <option value="other">Other</option>
+      </select>
+      <button type="submit">Update</button>
+      <button type="button" onclick="closeEditForm()">Cancel</button>
     </form>
   </div>
 </body>
